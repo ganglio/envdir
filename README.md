@@ -7,12 +7,14 @@ The script will automatically source the file when entering the folder and rever
 
 #### 1. Clone the repository:
 
+```sh
 git clone https://github.com/ganglio/envdir.git ~/.envdir
+```
 
 #### 2. Add `envdir` to your shell
 
 ```sh
-echo "source ~/.envdir/envdir" > .zshrc
+echo "source ~/.envdir/envdir" >> .zshrc
 ```
 
 ## Functions
