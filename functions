@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-# Pushes a $1 to stack
+# Pushes $1 to the stack
 pushs() {
 	local exploded_stack
 	exploded_stack=( $1 ${(s/|/)SSTACK} )
@@ -33,6 +33,13 @@ sizes() {
 	echo $#exploded_stack
 }
 
+# Checks if the provided folder is enved. If no folder is provided checks the current folder
+has_envrc() {
+	[[ -n $checked_path ]] && checked_path=$1 || checked_path=$PWD
+
+	[[ -f $checked_path/.envrc ]] && echo "yes" || echo "no"
+}
+
 # Assigns stdin to $1
 pipeset() {
 	local name=$1
@@ -40,7 +47,7 @@ pipeset() {
 	eval $name"="$value
 }
 
-# flushes the env
+# Flushes the env
 flushenv() {
 	local vars var
 	IFS=$'\n' vars=( $(env | awk -F '=' '{print $1}') )
