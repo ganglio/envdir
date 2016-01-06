@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+
 # Pushes a $1 to stack
 pushs() {
 	local exploded_stack
