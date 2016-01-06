@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+source ./functions
+source ./hooks

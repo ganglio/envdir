@@ -1,0 +1,21 @@
+#!/bin/zsh
+
+OLD_PWD=$(pwd)
+function envdir_chpwd {
+	if [[ $PWD != $OLD_PWD ]] then
+		if [[ -f $OLD_PWD/.envrc ]] then
+			echo "Leaving an envdirred folder"
+			flushenv
+			popenv
+		fi
+		if [[ -f $PWD/.envrc ]] then
+			echo "Entering an envdirred folder"
+			pushenv
+			source $PWD/.envrc
+		fi
+	fi
+
+	OLD_PWD=$(pwd)
+}
+
+add-zsh-hook chpwd envdir_chpwd

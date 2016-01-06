@@ -1,0 +1,70 @@
+#!/bin/zsh
+
+pushs() {
+	local exploded_stack
+	exploded_stack=( $1 ${(s/|/)SSTACK} )
+	SSTACK=${(j/|/)exploded_stack}
+}
+
+pops() {
+	local exploded_stack
+	exploded_stack=( ${(s/|/)SSTACK} )
+
+	echo $exploded_stack[1]
+
+	[ $#exploded_stack != 0 ] && exploded_stack[1]=()
+	SSTACK=${(j/|/)exploded_stack}
+}
+
+gets() {
+	local exploded_stack
+	exploded_stack=( ${(s/|/)SSTACK} )
+	echo $exploded_stack[$1]
+}
+
+sizes() {
+	local exploded_stack
+	exploded_stack=( ${(s/|/)SSTACK} )
+	echo $#exploded_stack
+}
+
+flushenv() {
+	local vars var
+	IFS=$'\n' vars=( $(env | awk -F '=' '{print $1}') )
+
+	for var in $vars; do
+		case $var in
+			PATH) ;;
+			HOME) ;;
+			SHELL) ;;
+			PWD) ;;
+			OLDPWD) ;;
+			*)
+				unset $var
+			;;
+		esac
+	done
+}
+
+pushenv() {
+	pushs $(env | base64 -)
+}
+
+popenv() {
+	local envs envar varname
+	IFS=$'\n' envs=( $(pops | base64 -D -) )
+
+	for envar in $envs; do
+		varname=$(echo $envar | awk -F '=' '{print $1}')
+		case $varname in
+			PATH) ;;
+			HOME) ;;
+			SHELL) ;;
+			PWD) ;;
+			OLDPWD) ;;
+			*)
+				export $envar
+			;;
+		esac
+	done
+}
