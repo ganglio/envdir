@@ -4,3 +4,9 @@ export ENVDIR=$(dirname $0:A)
 
 source $ENVDIR/functions
 source $ENVDIR/hooks
+
+if [[ -f $PWD/.envrc ]] then
+	echo "Entering an envdirred folder"
+	pushenv
+	source $PWD/.envrc
+fi

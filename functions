@@ -1,38 +1,52 @@
 #!/bin/zsh
 
+# Pushes a $1 to stack
 pushs() {
 	local exploded_stack
 	exploded_stack=( $1 ${(s/|/)SSTACK} )
 	SSTACK=${(j/|/)exploded_stack}
 }
 
+# Pops from stack. If $1 is provided the head of the stack is assigned to the $1 echoed otherwise
 pops() {
 	local exploded_stack
 	exploded_stack=( ${(s/|/)SSTACK} )
 
-	echo $exploded_stack[1]
+	[[ -z $1 ]] && echo $exploded_stack[1]
+	[[ -n $1 ]] && eval $1"="$exploded_stack[1]
 
 	[ $#exploded_stack != 0 ] && exploded_stack[1]=()
 	SSTACK=${(j/|/)exploded_stack}
 }
 
+# Get the ${1}th element from the stack without changing the stack
 gets() {
 	local exploded_stack
 	exploded_stack=( ${(s/|/)SSTACK} )
 	echo $exploded_stack[$1]
 }
 
+# Returns the size of the stack
 sizes() {
 	local exploded_stack
 	exploded_stack=( ${(s/|/)SSTACK} )
 	echo $#exploded_stack
 }
 
+# Assigns stdin to $1
+pipeset() {
+	local name=$1
+	local value=$(cat -)
+	eval $name"="$value
+}
+
+# flushes the env
 flushenv() {
 	local vars var
 	IFS=$'\n' vars=( $(env | awk -F '=' '{print $1}') )
 
 	for var in $vars; do
+		[[ -n $DEBUG ]] && echo $var
 		case $var in
 			PATH) ;;
 			HOME) ;;
@@ -46,16 +60,20 @@ flushenv() {
 	done
 }
 
+# Pushes the env on the stack
 pushenv() {
 	pushs $(env | base64 -)
 }
 
+# Pops the env from the stack
 popenv() {
 	local envs envar varname
-	IFS=$'\n' envs=( $(pops | base64 -D -) )
+	pops envs
+	IFS=$'\n' envs=( $(echo $envs | base64 -D -) )
 
 	for envar in $envs; do
 		varname=$(echo $envar | awk -F '=' '{print $1}')
+		[[ -n $DEBUG ]] && echo $varname
 		case $varname in
 			PATH) ;;
 			HOME) ;;
