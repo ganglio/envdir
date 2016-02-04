@@ -1,4 +1,5 @@
 # ZSH EnvDir
+
 The script allows to customise the `env` per folder.
 Just drop a file named `.envrc` into a folder and add there your variables.
 The script will automatically source the file when entering the folder and revert to the old `env` when exiting
