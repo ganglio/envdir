@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+autoload -U add-zsh-hook
 export ENVDIR=$(dirname $0:A)
 
 source $ENVDIR/functions
